@@ -1,0 +1,23 @@
+name: Telegram posts — 10 per day
+on:
+  schedule:
+    # 07:00–16:00 Moscow (UTC+3), one per hour
+    - cron: '0 4-13 * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: setka-telegram-publisher
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Send next Telegram post
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        run: python post.py
